@@ -22,3 +22,18 @@ class Sprite:
         self.x = x
         self.y = y
         s.screen.blit(self.bitmap, (self.x, self.y))
+
+    def width(self):
+        return self.bitmap.get_width()
+
+    def height(self):
+        return self.bitmap.get_height()
+
+    def rect(self):
+        return pygame.Rect(self.x, self.y, self.bitmap.get_width(), self.bitmap.get_height())
+
+    def collide(self, other_sprite):
+        my_rect = self.rect()
+        other_rect = other_sprite.rect()
+        return my_rect.colliderect(other_rect)
+

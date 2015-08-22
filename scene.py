@@ -9,8 +9,12 @@ class Scene:
     def __init__(self, game):
         self.game = game
         self.s = game.s
+        print "Init Scene " + self.__class__.__name__
 
     def load(self):
+        pass
+
+    def cleanup(self):
         pass
 
     def do_event(self, event):

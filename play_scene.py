@@ -9,9 +9,12 @@ from screen import Screen
 from sprite import Sprite
 from scene import Scene
 
+import over_scene
+
 SPAWNBUG = pygame.USEREVENT + 1
 
 MAX_BUGS = 5
+GAME_LENGTH = 20
 
 class play_scene(Scene):
     eraser_sprite = None
@@ -24,10 +27,13 @@ class play_scene(Scene):
     font = None
     score = 0
     splat_sound = None
+    secs = 0
 
     def spawn_bug(self):
         if len(self.bug_sprites) >= MAX_BUGS:
             return
+
+        print "spawn bug"
 
         new_bug = Sprite("art/bug1.png")
         new_bug.x = random.randint(0, self.s.size[0] - new_bug.width())
@@ -39,12 +45,14 @@ class play_scene(Scene):
         for bug_sprite in self.bug_sprites:
             if bug_sprite.collide(self.eraser_sprite):
                 self.bug_sprites.remove(bug_sprite)
-                self.score = self.score = 1
+                self.score = self.score + 1
                 self.splat_sound.play()
                 return
 
     def load(self):
         self.start_time = pygame.time.get_ticks()
+
+        self.bug_sprites = []
 
         self.font = pygame.font.Font("art/joystix.otf", 22)
 
@@ -55,6 +63,9 @@ class play_scene(Scene):
         self.splat_sound = pygame.mixer.Sound("art/squish.wav")
 
         pygame.time.set_timer(SPAWNBUG, 1000)
+
+    def cleanup(self):
+        pygame.time.set_timer(SPAWNBUG, 0)
 
     def do_event(self, event):
         if event.type == pygame.KEYDOWN:
@@ -81,6 +92,13 @@ class play_scene(Scene):
             self.spawn_bug()
 
     def update(self):
+        elapsed_time = pygame.time.get_ticks() - self.start_time
+        self.secs = GAME_LENGTH - int(elapsed_time/1000)
+        if (self.secs == 0):
+            os = over_scene.over_scene(self.game)
+            os.score = self.score
+            self.game.gotoScene(os)
+
         if self.down_pressed:
             self.eraser_sprite.y = self.eraser_sprite.y + 1
         if self.up_pressed:
@@ -94,16 +112,15 @@ class play_scene(Scene):
         self.s.screen.fill((0,0,0))
 
         # Time Left
-        elapsed_time = pygame.time.get_ticks() - self.start_time
-        secs = str(60 - int(elapsed_time/1000))
-        if (len(secs) < 1):
-            secs = "0" + secs
-        time_label = self.font.render(secs, 1, (255,255,0))
-        self.s.screen.blit(time_label, (4,4))
+        secs_string = str(self.secs)
+        if (len(secs_string) < 1):
+            secs_string = "0" + secs_string
+        time_label = self.font.render(secs_string, 1, (255,255,0))
+        self.s.screen.blit(time_label, (4, 10))
 
         # Score
         score_label = self.font.render("Score: " + str(self.score), 1, (255,255,0))
-        self.s.screen.blit(score_label, (self.s.size[0] - 180,4))
+        self.s.screen.blit(score_label, (self.s.size[0] - 180, 10))
 
         for bug_sprite in self.bug_sprites:
             bug_sprite.blit(self.s)

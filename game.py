@@ -8,7 +8,8 @@ import random
 from screen import Screen
 from sprite import Sprite
 from scene import Scene
-from play_scene import play_scene
+
+from intro_scene import intro_scene
 
 class Game:
     s = None
@@ -34,6 +35,8 @@ class Game:
                 exit(0)
 
     def gotoScene(self, scene):
+        if self.current_scene is not None:
+            self.current_scene.cleanup()
         self.current_scene = scene
         self.current_scene.load()
 
@@ -54,7 +57,7 @@ class Game:
 
 def main():
     game = Game()
-    game.gotoScene(play_scene(game))
+    game.gotoScene(intro_scene(game))
     game.run()
 
 if __name__ == "__main__":

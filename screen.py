@@ -6,6 +6,14 @@ import pygame
 import sys
 import os
 
+
+FREQ = 22060   # same as audio CD
+BITSIZE = -16  # unsigned 16 bit
+CHANNELS = 1   # 1 == mono, 2 == stereo
+BUFFER = 1024  # audio buffer size in no. of samples
+FRAMERATE = 30 # how often to check if playback has finished
+
+
 class Screen:
 
     screen = None
@@ -15,8 +23,10 @@ class Screen:
         pass
 
     def MakeScreen(self):
+        pygame.mixer.pre_init(FREQ, BITSIZE, CHANNELS, BUFFER)
         pygame.init()
         pygame.mouse.set_visible(False)
+
 
         drivers = ['fbcon', 'directfb', 'svgalib']
         found = False

@@ -13,6 +13,8 @@ from sprite import Sprite
 
 SPAWNBUG = pygame.USEREVENT + 1
 
+MAX_BUGS = 5
+
 class Game:
     s = None
     eraser_sprite = None
@@ -24,9 +26,10 @@ class Game:
     start_time = 0
     font = None
     score = 0
+    splat_sound = None
 
     def spawn_bug(self):
-        if len(self.bug_sprites) >= 3:
+        if len(self.bug_sprites) >= MAX_BUGS:
             return
 
         new_bug = Sprite("art/bug1.png")
@@ -40,9 +43,13 @@ class Game:
             if bug_sprite.collide(self.eraser_sprite):
                 self.bug_sprites.remove(bug_sprite)
                 self.score = self.score = 1
+                self.splat_sound.play()
                 return
 
     def load(self):
+        pygame.mixer.music.load("art/FarmFreshFiddlen.ogg")
+        pygame.mixer.music.play(-1, 0.0)
+
         self.start_time = pygame.time.get_ticks()
 
         self.font = pygame.font.Font("art/joystix.otf", 22)
@@ -50,6 +57,8 @@ class Game:
         e = self.eraser_sprite = Sprite("art/eraser.png")
         e.x = self.s.size[0] / 2.0
         e.y = self.s.size[1] / 2.0
+
+        self.splat_sound = pygame.mixer.Sound("art/squish.wav")
 
         pygame.time.set_timer(SPAWNBUG, 1000)
 

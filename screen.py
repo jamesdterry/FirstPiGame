@@ -15,6 +15,9 @@ class Screen:
         pass
 
     def MakeScreen(self):
+        pygame.init()
+        pygame.mouse.set_visible(False)
+
         drivers = ['fbcon', 'directfb', 'svgalib']
         found = False
         for driver in drivers:

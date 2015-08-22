@@ -21,6 +21,9 @@ class Game:
     up_pressed = False
     left_pressed = False
     right_pressed = False
+    start_time = 0
+    font = None
+    score = 0
 
     def spawn_bug(self):
         if len(self.bug_sprites) >= 3:
@@ -36,9 +39,14 @@ class Game:
         for bug_sprite in self.bug_sprites:
             if bug_sprite.collide(self.eraser_sprite):
                 self.bug_sprites.remove(bug_sprite)
+                self.score = self.score = 1
                 return
 
     def load(self):
+        self.start_time = pygame.time.get_ticks()
+
+        self.font = pygame.font.Font("art/joystix.otf", 22)
+
         e = self.eraser_sprite = Sprite("art/eraser.png")
         e.x = self.s.size[0] / 2.0
         e.y = self.s.size[1] / 2.0
@@ -81,6 +89,18 @@ class Game:
 
     def draw(self):
         self.s.screen.fill((0,0,0))
+
+        # Time Left
+        elapsed_time = pygame.time.get_ticks() - self.start_time
+        secs = str(60 - int(elapsed_time/1000))
+        if (len(secs) < 1):
+            secs = "0" + secs
+        time_label = self.font.render(secs, 1, (255,255,0))
+        self.s.screen.blit(time_label, (4,4))
+
+        # Score
+        score_label = self.font.render("Score: " + str(self.score), 1, (255,255,0))
+        self.s.screen.blit(score_label, (self.s.size[0] - 180,4))
 
         for bug_sprite in self.bug_sprites:
             bug_sprite.blit(self.s)

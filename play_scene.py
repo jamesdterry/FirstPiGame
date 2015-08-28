@@ -27,11 +27,14 @@ class play_scene(Scene):
     font = None
     score = 0
     splat_sound = None
+    spawn_sound = None
     secs = 0
 
     def spawn_bug(self):
         if len(self.bug_sprites) >= MAX_BUGS:
             return
+
+        self.spawn_sound.play()
 
         new_bug = Sprite("art/bug1.png")
         new_bug.x = random.randint(0, self.s.size[0] - new_bug.width())
@@ -59,6 +62,8 @@ class play_scene(Scene):
         e.y = self.s.size[1] / 2.0
 
         self.splat_sound = pygame.mixer.Sound("art/squish.wav")
+
+        self.spawn_sound = pygame.mixer.Sound("art/boing.wav")
 
         pygame.time.set_timer(SPAWNBUG, 1000)
 
@@ -114,7 +119,7 @@ class play_scene(Scene):
         if (len(secs_string) < 1):
             secs_string = "0" + secs_string
         time_label = self.font.render(secs_string, 1, (255,255,0))
-        self.s.screen.blit(time_label, (4, 10))
+        self.s.screen.blit(time_label, (20, 10))
 
         # Score
         score_label = self.font.render("Score: " + str(self.score), 1, (255,255,0))

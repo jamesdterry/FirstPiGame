@@ -33,8 +33,6 @@ class play_scene(Scene):
         if len(self.bug_sprites) >= MAX_BUGS:
             return
 
-        print "spawn bug"
-
         new_bug = Sprite("art/bug1.png")
         new_bug.x = random.randint(0, self.s.size[0] - new_bug.width())
         new_bug.y = random.randint(0, self.s.size[1] - new_bug.height())
